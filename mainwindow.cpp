@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 
-#include "database/initdb.h"
 #include "utils/validation.h"
 #include "./ui_mainwindow.h"
 
 #include <QtSql>
 #include <QMessageBox>
 #include <QRadioButton>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -18,10 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
         QMessageBox::critical(this, "Unable to load database",
                               "This demo needs the MySql driver");
 
-    QSqlError err = initDb();
-    if (err.type() != QSqlError::NoError)
-        showError(err);
-
     if (ui->set_empl_table->isChecked())
         dbController.setEmoloyeeDetail(ui->recordTable);
 
@@ -29,17 +25,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->genderComBox->addItem("мужской");
     ui->genderComBox->addItem("женский");
+
+    connect(ui->delete_rec, &QPushButton::clicked, this, &MainWindow::delete_row_in_table);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::showError(const QSqlError &err)
-{
-    QMessageBox::critical(this, "Unable to initialize Database",
-                          "Error initializing database: " + err.text());
 }
 
 void MainWindow::on_set_empl_table_clicked()
@@ -76,6 +68,12 @@ void MainWindow::on_seach_in_table_returnPressed()
 void MainWindow::on_seach_rec_btn_clicked()
 {
     ui->seachStackedWidget->setCurrentIndex(0);
+
+    if (ui->set_empl_table->isChecked())
+        dbController.setEmoloyeeDetail(ui->recordTable);
+    else if (ui->set_dep_table->isChecked())
+        dbController.setDepartmentDetail(ui->recordTable);
+    else dbController.setPositionDetail(ui->recordTable);
 }
 
 void MainWindow::on_add_new_rec_clicked()
@@ -101,7 +99,30 @@ void MainWindow::on_save_in_empl_table_clicked()
         msg.exec();
     } else
     {
+        int posIndex = dbController.getComBoxIndex(ui->posComBox);
+        int depIndex = dbController.getComBoxIndex(ui->depComBox);
 
+        dbController.insertNewEployee(q, ui->lastnameEdit->text(), ui->firstnameEdit->text(), ui->surnameEdit->text(),
+                                      ui->genderComBox->currentText(), ui->seniorityEdit->text().toInt(),
+                                      ui->hireDataEdit->date(), ui->phoneEdit->text(), posIndex, depIndex);
+        dbController.setEmoloyeeDetail(ui->emplTable);
     };
+}
+
+void MainWindow::delete_row_in_table()
+{
+    QItemSelectionModel *selectMode = ui->emplTable->selectionModel();
+
+    QModelIndexList listMode = selectMode->selectedRows();
+    qDebug() << "list: " << listMode.size();
+    if (listMode.count() == 0)
+    {
+        QMessageBox::information(NULL, tr("Внимание"), tr("Выберите хотя бы одну строку для удаления!"), QMessageBox::Yes);
+    } else
+    {
+        QMessageBox::information(NULL, tr("Внимание"), tr("Вы действидельно хотите удалить запись?"), QMessageBox::Yes, QMessageBox::No);
+        if (QMessageBox::Yes)
+            dbController.removeRecord(ui->emplTable, listMode);
+    }
 }
 

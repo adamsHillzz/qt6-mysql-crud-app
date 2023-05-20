@@ -33,9 +33,13 @@ private slots:
 
     void on_save_in_empl_table_clicked();
 
+    //void getIndexRow(const QModelIndex &index);
+
+    void delete_row_in_table();
+
 private:
     DbController dbController;
-    void showError(const QSqlError &err);
+    QSqlQuery q;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H
