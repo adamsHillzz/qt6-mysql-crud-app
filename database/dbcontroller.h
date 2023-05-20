@@ -2,6 +2,8 @@
 #define DBCONTROLLER_H
 
 #include <QTableView>
+#include <QStandardItemModel>
+#include <QDataWidgetMapper>
 #include <QComboBox>
 #include <QtSql>
 
@@ -22,12 +24,15 @@ public:
     // insert employee in database
     QSqlError insertNewEployee(QSqlQuery &q, QString lastname, QString firstname, QString surname, QVariant gender,
                     int seniority, QDate hire_date, QString phone, int position, int department);
+    QSqlQuery* GetEmplDetailsFoID(QString id);
     // remove record from database and table
     void removeRecord(QTableView *tableView, QModelIndexList listMode);
+    QSqlError updateRecord(QSqlQuery &q, QString lastname, QString firstname, QString surname, QVariant gender,
+                           int seniority, QDate hire_date, QString phone, int position, int department, QString idRec);
 private:
+    QSqlRelationalTableModel *model;
     void showError(const QSqlError &err);
     int positionIdx, departmentIdx, supervisorIdx;
-    QSqlRelationalTableModel *model;
 };
 
 #endif // DBCONTROLLER_H

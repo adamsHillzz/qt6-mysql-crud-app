@@ -1,12 +1,15 @@
 #include "mainwindow.h"
 
 #include "utils/validation.h"
+#include "utils/activebutton.h"
 #include "./ui_mainwindow.h"
 
 #include <QtSql>
 #include <QMessageBox>
 #include <QRadioButton>
 #include <QPushButton>
+#include <QAbstractItemView>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -22,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent)
         dbController.setEmoloyeeDetail(ui->recordTable);
 
     ui->seachStackedWidget->setCurrentIndex(0);
+
+    activeButton(ui->seachStackedWidget, ui->delete_rec, ui->edit_rec);
 
     ui->genderComBox->addItem("мужской");
     ui->genderComBox->addItem("женский");
@@ -69,6 +74,8 @@ void MainWindow::on_seach_rec_btn_clicked()
 {
     ui->seachStackedWidget->setCurrentIndex(0);
 
+    activeButton(ui->seachStackedWidget, ui->delete_rec, ui->edit_rec);
+
     if (ui->set_empl_table->isChecked())
         dbController.setEmoloyeeDetail(ui->recordTable);
     else if (ui->set_dep_table->isChecked())
@@ -79,6 +86,9 @@ void MainWindow::on_seach_rec_btn_clicked()
 void MainWindow::on_add_new_rec_clicked()
 {    
     ui->seachStackedWidget->setCurrentIndex(1);
+
+    activeButton(ui->seachStackedWidget, ui->delete_rec, ui->edit_rec);
+
     ui->hireDataEdit->setDate(QDate::currentDate());
 
     dbController.setEmoloyeeDetail(ui->emplTable);
@@ -113,6 +123,13 @@ void MainWindow::delete_row_in_table()
 {
     QItemSelectionModel *selectMode = ui->emplTable->selectionModel();
 
+    if (ui->tabWidget->currentIndex() == 1)
+//        selectMode = ui->emplTable->selectionModel();
+        qDebug() << "pos";
+    if (ui->tabWidget->currentIndex() == 2)
+//        selectMode = ui->emplTable->selectionModel();
+        qDebug() << "dep";
+
     QModelIndexList listMode = selectMode->selectedRows();
     qDebug() << "list: " << listMode.size();
     if (listMode.count() == 0)
@@ -124,5 +141,50 @@ void MainWindow::delete_row_in_table()
         if (QMessageBox::Yes)
             dbController.removeRecord(ui->emplTable, listMode);
     }
+}
+
+void MainWindow::on_edit_rec_clicked()
+{
+    validation(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit, ui->seniorityEdit, ui->phoneEdit);
+
+    if (!validCheck)
+    {
+        QMessageBox msg;
+        msg.setWindowTitle("Внимание");
+        msg.setIcon(QMessageBox::Warning);
+        msg.setText("Для того чтобы изменить запись щелкните по ячейке таблице двойным кликом");
+        msg.exec();
+    } else {
+        int posIndex = dbController.getComBoxIndex(ui->posComBox);
+        int depIndex = dbController.getComBoxIndex(ui->depComBox);
+
+        dbController.updateRecord(q, ui->lastnameEdit->text(), ui->firstnameEdit->text(), ui->surnameEdit->text(),
+                                      ui->genderComBox->currentText(), ui->seniorityEdit->text().toInt(),
+                                      ui->hireDataEdit->date(), ui->phoneEdit->text(), posIndex, depIndex, idRec);
+        dbController.setEmoloyeeDetail(ui->emplTable);
+    }
+}
+
+
+void MainWindow::on_emplTable_doubleClicked(const QModelIndex &index)
+{
+    idRec = ui->emplTable->model()->index(index.row(), 0).data().toString();
+    QSqlQuery* q = dbController.GetEmplDetailsFoID(idRec);
+
+    QString gender = q->value("gender").toString();
+
+    if (gender == "мужской")
+        ui->genderComBox->setCurrentIndex(0);
+    else
+        ui->genderComBox->setCurrentIndex(1);
+
+    ui->lastnameEdit->setText(q->value("lastname").toString());
+    ui->firstnameEdit->setText(q->value("name").toString());
+    ui->surnameEdit->setText(q->value("surname").toString());
+    ui->hireDataEdit->setDate(q->value("hire_data").toDate());
+    ui->phoneEdit->setText(q->value("phone").toString());
+    ui->seniorityEdit->setText(q->value("seniority").toString());
+    ui->posComBox->setCurrentIndex(q->value("position").toInt() - 1);
+    ui->depComBox->setCurrentIndex(q->value("department").toInt() - 1);
 }
 

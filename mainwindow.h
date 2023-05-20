@@ -37,8 +37,13 @@ private slots:
 
     void delete_row_in_table();
 
+    void on_edit_rec_clicked();
+
+    void on_emplTable_doubleClicked(const QModelIndex &index);
+
 private:
     DbController dbController;
+    QString idRec;
     QSqlQuery q;
     Ui::MainWindow *ui;
 };

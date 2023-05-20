@@ -4,6 +4,7 @@
 
 #include <QtSql>
 #include <QTableView>
+#include <QLineEdit>
 #include <QComboBox>
 #include <QMessageBox>
 
@@ -79,6 +80,7 @@ void DbController::setDepartmentDetail(QTableView *tableView)
 
     for (int i = 0; i < model->columnCount(); i++)
         tableView->setColumnWidth(i, 135);
+
 }
 
 void DbController::setComBoxValue(QComboBox *posComBox, QComboBox *depComBox)
@@ -143,17 +145,52 @@ QSqlError DbController::insertNewEployee(QSqlQuery &q, QString lastname, QString
     return QSqlError();
 }
 
+QSqlQuery* DbController::GetEmplDetailsFoID(QString id)
+{
+    QSqlQuery *q = new QSqlQuery();
+
+    if (!q->prepare(SELECT_EMPLOYEE_SQL))
+        qDebug() << q->lastError();
+
+    q->addBindValue(id);
+    q->exec();
+    q->next();
+
+    return q;
+}
+
 void DbController::removeRecord(QTableView *tableView, QModelIndexList listMode)
 {
     QSqlTableModel *model = qobject_cast<QSqlTableModel *>(tableView->model());
 
     for (int i = 0; i < listMode.count(); i++)
     {
-        //int mainId = model->data(model->index(listMode.at(i).row(), 0)).toInt();
+//        int mainId = model->data(model->index(listMode.at(i).row(), 0)).toInt();
         model->removeRow(i);
     }
 
     model->submitAll();
+}
+
+QSqlError DbController::updateRecord(QSqlQuery &q, QString lastname, QString firstname, QString surname, QVariant gender,
+                                int seniority, QDate hire_date, QString phone, int position, int department, QString idRec)
+{
+    if (!q.prepare(UPDATE_EMPLOYEE_SQL))
+        return q.lastError();
+
+    q.addBindValue(lastname);
+    q.addBindValue(firstname);
+    q.addBindValue(surname);
+    q.addBindValue(gender);
+    q.addBindValue(seniority);
+    q.addBindValue(hire_date);
+    q.addBindValue(phone);
+    q.addBindValue(position);
+    q.addBindValue(department);
+    q.addBindValue(idRec);
+    q.exec();
+
+    return QSqlError();
 }
 
 DbController::DbController()

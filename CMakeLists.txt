@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         utils/validation.h
+        utils/activebutton.h
         database/initdb.h
         database/dbcontroller.h
         database/dbquerys.h
