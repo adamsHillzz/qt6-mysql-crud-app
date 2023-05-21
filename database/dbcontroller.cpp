@@ -8,79 +8,84 @@
 #include <QComboBox>
 #include <QMessageBox>
 
-void DbController::setEmoloyeeDetail(QTableView *tableView)
+//void DbController::setEmoloyeeDetail(QTableView *tableView)
+//{
+//    model = new QSqlRelationalTableModel(tableView);
+
+//    model->setTable("employees");
+//    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+//    positionIdx = model->fieldIndex("position");
+//    departmentIdx = model->fieldIndex("department");
+
+//    model->setRelation(positionIdx, QSqlRelation("positions", "id_pos", "position_name"));
+//    model->setRelation(departmentIdx, QSqlRelation("departments", "id_dep", "department_name"));
+
+//    model->setHeaderData(model->fieldIndex("lastname"), Qt::Horizontal, QTableView::tr("Фамилие"));
+//    model->setHeaderData(model->fieldIndex("name"), Qt::Horizontal, QTableView::tr("Имя"));
+//    model->setHeaderData(model->fieldIndex("surname"), Qt::Horizontal, QTableView::tr("Отчество"));
+//    model->setHeaderData(model->fieldIndex("gender"), Qt::Horizontal, QTableView::tr("Пол"));
+//    model->setHeaderData(model->fieldIndex("seniority"), Qt::Horizontal, QTableView::tr("Стаж"));
+//    model->setHeaderData(model->fieldIndex("hire_data"), Qt::Horizontal, QTableView::tr("Дата приема"));
+//    model->setHeaderData(model->fieldIndex("phone"), Qt::Horizontal, QTableView::tr("Телефон"));
+//    model->setHeaderData(positionIdx, Qt::Horizontal, QTableView::tr("Должность"));
+//    model->setHeaderData(departmentIdx, Qt::Horizontal, QTableView::tr("Отдел"));
+
+//    if (!model->select())
+//        qDebug() << model->lastError();
+
+//    tableView->setModel(model);
+//    tableView->setColumnHidden(model->fieldIndex("id_empl"), true);
+
+//    for (int i = 0; i < model->columnCount(); i++)
+//        tableView->setColumnWidth(i, 135);
+//}
+
+//void DbController::setPositionDetail(QTableView *tableView)
+//{
+//    model = new QSqlRelationalTableModel(tableView);
+
+//    model->setTable("positions");
+//    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+//    model->setHeaderData(model->fieldIndex("position_name"), Qt::Horizontal, QTableView::tr("Должность"));
+//    model->setHeaderData(model->fieldIndex("salary"), Qt::Horizontal, QTableView::tr("Оклад"));
+
+//    if (!model->select())
+//        qDebug() << model->lastError();
+
+//    tableView->setModel(model);
+//    tableView->setColumnHidden(model->fieldIndex("id_pos"), true);
+
+//    for (int i = 0; i < model->columnCount(); i++)
+//        tableView->setColumnWidth(i, 135);
+//}
+
+//void DbController::setDepartmentDetail(QTableView *tableView)
+//{
+//    model = new QSqlRelationalTableModel(tableView);
+
+//    model->setTable("departments");
+//    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+//    model->setHeaderData(model->fieldIndex("department_name"), Qt::Horizontal, QTableView::tr("Название отдела"));
+//    model->setHeaderData(model->fieldIndex("office_num"), Qt::Horizontal, QTableView::tr("Кабинет начальника"));
+//    model->setHeaderData(model->fieldIndex("department_phone"), Qt::Horizontal, QTableView::tr("Телефон отдела"));
+
+//    if (!model->select())
+//        qDebug() << model->lastError();
+
+//    tableView->setModel(model);
+
+//    for (int i = 0; i < model->columnCount(); i++)
+//        tableView->setColumnWidth(i, 135);
+//}
+
+DbController::DbController()
 {
-    model = new QSqlRelationalTableModel(tableView);
-
-    model->setTable("employees");
-    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-
-    positionIdx = model->fieldIndex("position");
-    departmentIdx = model->fieldIndex("department");
-
-    model->setRelation(positionIdx, QSqlRelation("positions", "id_pos", "position_name"));
-    model->setRelation(departmentIdx, QSqlRelation("departments", "id_dep", "department_name"));
-
-    model->setHeaderData(model->fieldIndex("lastname"), Qt::Horizontal, QTableView::tr("Фамилие"));
-    model->setHeaderData(model->fieldIndex("name"), Qt::Horizontal, QTableView::tr("Имя"));
-    model->setHeaderData(model->fieldIndex("surname"), Qt::Horizontal, QTableView::tr("Отчество"));
-    model->setHeaderData(model->fieldIndex("gender"), Qt::Horizontal, QTableView::tr("Пол"));
-    model->setHeaderData(model->fieldIndex("seniority"), Qt::Horizontal, QTableView::tr("Стаж"));
-    model->setHeaderData(model->fieldIndex("hire_data"), Qt::Horizontal, QTableView::tr("Дата приема"));
-    model->setHeaderData(model->fieldIndex("phone"), Qt::Horizontal, QTableView::tr("Телефон"));
-    model->setHeaderData(positionIdx, Qt::Horizontal, QTableView::tr("Должность"));
-    model->setHeaderData(departmentIdx, Qt::Horizontal, QTableView::tr("Отдел"));
-
-    if (!model->select())
-        qDebug() << model->lastError();
-
-    tableView->setModel(model);
-    tableView->setColumnHidden(model->fieldIndex("id_empl"), true);
-
-    for (int i = 0; i < model->columnCount(); i++)
-        tableView->setColumnWidth(i, 135);
-}
-
-void DbController::setPositionDetail(QTableView *tableView)
-{
-    model = new QSqlRelationalTableModel(tableView);
-
-    model->setTable("positions");
-    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-
-    model->setHeaderData(model->fieldIndex("position_name"), Qt::Horizontal, QTableView::tr("Должность"));
-    model->setHeaderData(model->fieldIndex("salary"), Qt::Horizontal, QTableView::tr("Оклад"));
-
-    if (!model->select())
-        qDebug() << model->lastError();
-
-    tableView->setModel(model);
-
-    for (int i = 0; i < model->columnCount(); i++)
-        tableView->setColumnWidth(i, 135);
-}
-
-void DbController::setDepartmentDetail(QTableView *tableView)
-{
-    model = new QSqlRelationalTableModel(tableView);
-
-    model->setTable("departments");
-    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-
-    model->setRelation(supervisorIdx, QSqlRelation("employees", "id_empl", "lastname"));
-
-    model->setHeaderData(model->fieldIndex("department_name"), Qt::Horizontal, QTableView::tr("Название отдела"));
-    model->setHeaderData(model->fieldIndex("office_num"), Qt::Horizontal, QTableView::tr("Кабинет начальника"));
-    model->setHeaderData(model->fieldIndex("department_phone"), Qt::Horizontal, QTableView::tr("Телефон отдела"));
-
-    if (!model->select())
-        qDebug() << model->lastError();
-
-    tableView->setModel(model);
-
-    for (int i = 0; i < model->columnCount(); i++)
-        tableView->setColumnWidth(i, 135);
-
+    QSqlError err = initDb();
+    if (err.type() != QSqlError::NoError)
+        showError(err);
 }
 
 void DbController::setComBoxValue(QComboBox *posComBox, QComboBox *depComBox)
@@ -99,7 +104,7 @@ int DbController::getComBoxIndex(QComboBox *comBox)
     return data.toInt();
 }
 
-void DbController::seachInTable(QString attribute, int mode)
+void DbController::seachInTable(QSqlRelationalTableModel *model, QString attribute, int mode)
 {
     switch (mode) {
     case 1:
@@ -145,6 +150,18 @@ QSqlError DbController::insertNewEployee(QSqlQuery &q, QString lastname, QString
     return QSqlError();
 }
 
+QSqlError DbController::insertNewPosition(QSqlQuery &q, QString posName, int salary)
+{
+    if (!q.prepare(INSERT_POSITION_SQL))
+        return q.lastError();
+
+    q.addBindValue(posName);
+    q.addBindValue(salary);
+    q.exec();
+
+    return QSqlError();
+}
+
 QSqlQuery* DbController::GetEmplDetailsFoID(QString id)
 {
     QSqlQuery *q = new QSqlQuery();
@@ -165,14 +182,14 @@ void DbController::removeRecord(QTableView *tableView, QModelIndexList listMode)
 
     for (int i = 0; i < listMode.count(); i++)
     {
-//        int mainId = model->data(model->index(listMode.at(i).row(), 0)).toInt();
-        model->removeRow(i);
+        //int mainId = model->data(model->index(listMode.at(i).row(), 0)).toInt();
+       model->removeRow(listMode.at(i).row());
     }
 
     model->submitAll();
 }
 
-QSqlError DbController::updateRecord(QSqlQuery &q, QString lastname, QString firstname, QString surname, QVariant gender,
+QSqlError DbController::updateRecordEmpl(QSqlQuery &q, QString lastname, QString firstname, QString surname, QVariant gender,
                                 int seniority, QDate hire_date, QString phone, int position, int department, QString idRec)
 {
     if (!q.prepare(UPDATE_EMPLOYEE_SQL))
@@ -193,19 +210,22 @@ QSqlError DbController::updateRecord(QSqlQuery &q, QString lastname, QString fir
     return QSqlError();
 }
 
-DbController::DbController()
+QSqlError DbController::updateRecordPos(QSqlQuery &q, QString posName, int salary, QString idRec)
 {
-    QSqlError err = initDb();
-    if (err.type() != QSqlError::NoError)
-        showError(err);
+    if (!q.prepare(UPDATE_POSITION_SQL))
+        return q.lastError();
+
+    q.addBindValue(posName);
+    q.addBindValue(salary);
+    q.addBindValue(idRec);
+    q.exec();
+
+    return QSqlError();
 }
 
 void DbController::showError(const QSqlError &err)
 {
-    QMessageBox::critical(nullptr, "Unable to initialize Database",
-                          "Error initializing database: " + err.text());
-}
 
-DbController::~DbController() {
-    delete model;
+    QMessageBox::critical(nullptr, "Unable to initialize Database",
+                        "Error initializing database: " + err.text());
 }

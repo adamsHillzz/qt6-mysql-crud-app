@@ -39,9 +39,23 @@ private slots:
 
     void on_edit_rec_clicked();
 
-    void on_emplTable_doubleClicked(const QModelIndex &index);
+    void on_save_in_pos_table_clicked();
+
+    void on_tabWidget_tabBarClicked(int index);
+
+    void on_empl_table_clicked(const QModelIndex &index);
+
+    void on_pos_table_clicked(const QModelIndex &index);
 
 private:
+    void setEmoloyeeDetail(QTableView *tableView);
+    void setPositionDetail(QTableView *tableView);
+    void setDepartmentDetail(QTableView *tableView);
+    void setComBoxValue(QComboBox *posComBox, QComboBox *depComBox);
+    int getComBoxIndex(QComboBox *comBox);
+    int positionIdx, departmentIdx;
+    QSqlRelationalTableModel *model;
+    QDataWidgetMapper *mapper = new QDataWidgetMapper();
     DbController dbController;
     QString idRec;
     QSqlQuery q;
