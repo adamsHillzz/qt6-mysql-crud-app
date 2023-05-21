@@ -8,10 +8,13 @@
 #include <QComboBox>
 #include <QtSql>
 
+
 class DbController
 {
 public:
     DbController();
+    void showError(const QSqlError &err);
+
     // set ComboBox relation
     void setComBoxValue(QComboBox *posComBox, QComboBox *depComBox);
     int getComBoxIndex(QComboBox *comBox);
@@ -19,17 +22,20 @@ public:
     void seachInTable(QSqlRelationalTableModel *model, QString attribute, int mode);
     // insert employee in database
     QSqlError insertNewEployee(QSqlQuery &q, QString lastname, QString firstname, QString surname, QVariant gender,
-                    int seniority, QDate hire_date, QString phone, int position, int department);
+                               QDate hire_date, QString phone, int position, int department);
     QSqlError insertNewPosition(QSqlQuery &q, QString posName, int salary);
+    QSqlError insertNewDepartment(QSqlQuery &q, QString depName, int officeNum, int depPhone);
+    QSqlError insertNewDocument(QSqlQuery &q, QDate dataDoc, QString docNumber, int rate, int salary);
     QSqlQuery* GetEmplDetailsFoID(QString id);
     // remove record from database and table
     void removeRecord(QTableView *tableView, QModelIndexList listMode);
     QSqlError updateRecordEmpl(QSqlQuery &q, QString lastname, QString firstname, QString surname, QVariant gender,
-                           int seniority, QDate hire_date, QString phone, int position, int department, QString idRec);
+                                QDate hire_date, QString phone, int position, int department, QString idRec);
     QSqlError updateRecordPos(QSqlQuery &q, QString posName, int salary, QString idRec);
+    QSqlError updateRecordDep(QSqlQuery &q, QString depName, int officeNum, int depPhone, QString idRec);
+    QSqlError updateRecordDoc(QSqlQuery &q, QDate dataDoc, QString docNumber, int rate, int salary, QString idRec);
 private:
     QSqlRelationalTableModel *model;
-    void showError(const QSqlError &err);
     int positionIdx, departmentIdx, supervisorIdx;
 };
 

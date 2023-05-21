@@ -13,6 +13,13 @@
   <property name="windowTitle">
    <string>Менеджер персонала</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../Files/team.png</normaloff>../../Files/team.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QFormLayout" name="formLayout">
     <item row="0" column="0">
@@ -40,7 +47,14 @@
       <item>
        <widget class="QPushButton" name="add_new_rec">
         <property name="text">
-         <string>Внести новую запись</string>
+         <string>Управление записями</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="open_statment_window">
+        <property name="text">
+         <string>Просмотр ведомостей</string>
         </property>
        </widget>
       </item>
@@ -53,6 +67,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="delete_rec">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
          <string>Удалить запись</string>
         </property>
@@ -75,6 +92,9 @@
     </item>
     <item row="0" column="1">
      <widget class="QStackedWidget" name="seachStackedWidget">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="currentIndex">
        <number>1</number>
       </property>
@@ -176,7 +196,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="emplTab">
            <attribute name="title">
@@ -184,80 +204,20 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0,0" columnstretch="0,1,0,1,0,1" columnminimumwidth="0,0,0,0,0,0">
+             <layout class="QGridLayout" name="gridLayout_3" rowstretch="0,0,0,0" columnstretch="0,0,0,0,0,0">
               <property name="horizontalSpacing">
                <number>10</number>
               </property>
               <property name="verticalSpacing">
                <number>12</number>
               </property>
-              <item row="0" column="3">
-               <widget class="QDateEdit" name="hireDataEdit">
-                <property name="buttonSymbols">
-                 <enum>QAbstractSpinBox::PlusMinus</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
-               <widget class="QLineEdit" name="seniorityEdit"/>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_6">
-                <property name="text">
-                 <string>Стаж</string>
-                </property>
-               </widget>
-              </item>
               <item row="2" column="1">
                <widget class="QLineEdit" name="surnameEdit"/>
-              </item>
-              <item row="1" column="5">
-               <widget class="QComboBox" name="depComBox"/>
-              </item>
-              <item row="1" column="3">
-               <widget class="QLineEdit" name="phoneEdit"/>
               </item>
               <item row="2" column="0">
                <widget class="QLabel" name="label_4">
                 <property name="text">
                  <string>Отчество</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="firstnameEdit"/>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>Имя</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="4">
-               <widget class="QLabel" name="label_14">
-                <property name="text">
-                 <string>Должность</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="lastnameEdit"/>
-              </item>
-              <item row="0" column="5">
-               <widget class="QComboBox" name="posComBox"/>
-              </item>
-              <item row="1" column="4">
-               <widget class="QLabel" name="label_15">
-                <property name="text">
-                 <string>Отдел</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_2">
-                <property name="text">
-                 <string>Фамилие</string>
                 </property>
                </widget>
               </item>
@@ -268,6 +228,9 @@
                 </property>
                </widget>
               </item>
+              <item row="3" column="1">
+               <widget class="QComboBox" name="genderComBox"/>
+              </item>
               <item row="3" column="0">
                <widget class="QLabel" name="label_5">
                 <property name="text">
@@ -275,8 +238,25 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
-               <widget class="QComboBox" name="genderComBox"/>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Фамилие</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="3">
+               <widget class="QDateEdit" name="hireDataEdit">
+                <property name="buttonSymbols">
+                 <enum>QAbstractSpinBox::PlusMinus</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="lastnameEdit"/>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="firstnameEdit"/>
               </item>
               <item row="0" column="2">
                <widget class="QLabel" name="label_12">
@@ -284,6 +264,36 @@
                  <string>Дата приема на работу</string>
                 </property>
                </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Имя</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QLineEdit" name="phoneEdit"/>
+              </item>
+              <item row="2" column="2">
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>Должность</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="3">
+               <widget class="QComboBox" name="posComBox"/>
+              </item>
+              <item row="3" column="2">
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string>Отдел</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="3">
+               <widget class="QComboBox" name="depComBox"/>
               </item>
              </layout>
             </item>
@@ -389,8 +399,155 @@
            <attribute name="title">
             <string>Отделы</string>
            </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0" columnstretch="0,0">
+              <property name="rightMargin">
+               <number>400</number>
+              </property>
+              <property name="horizontalSpacing">
+               <number>10</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>12</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Наименование отдела:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="officeEdit"/>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="depEdit"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_19">
+                <property name="text">
+                 <string>Номер кабинета:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_20">
+                <property name="text">
+                 <string>Телефон отдела:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="depPhoneEdit"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="save_in_dep_table">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="baseSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Сохранить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTableView" name="dep_table"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Ведомости</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <item>
+             <layout class="QGridLayout" name="gridLayout_13">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Дата документа</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="docNumEdit"/>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLabel" name="label_8">
+                <property name="text">
+                 <string>Стаж</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Оклад</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_7">
+                <property name="text">
+                 <string>Номер Документа</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QDateEdit" name="docDateEdit"/>
+              </item>
+              <item row="0" column="3">
+               <widget class="QLineEdit" name="ratDokEdit"/>
+              </item>
+              <item row="1" column="3">
+               <widget class="QComboBox" name="docComBox"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="save_in_doc_table">
+              <property name="maximumSize">
+               <size>
+                <width>140</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Сохранить</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTableView" name="doc_table"/>
+            </item>
+           </layout>
           </widget>
          </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_3">
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QTableView" name="states_table"/>
         </item>
        </layout>
       </widget>

@@ -6,7 +6,7 @@
 
 void activeButton(QStackedWidget *qStackWidget, QPushButton *deleteBtn, QPushButton *EditBtn)
 {
-    if (qStackWidget->currentIndex() == 0)
+    if (qStackWidget->currentIndex() == 0 || qStackWidget->currentIndex() == 2)
     {
         deleteBtn->setEnabled(false);
         EditBtn->setEnabled(false);

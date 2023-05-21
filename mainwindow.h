@@ -31,15 +31,17 @@ private slots:
 
     void on_add_new_rec_clicked();
 
-    void on_save_in_empl_table_clicked();
-
     //void getIndexRow(const QModelIndex &index);
 
     void delete_row_in_table();
 
     void on_edit_rec_clicked();
 
+    void on_save_in_empl_table_clicked();
+
     void on_save_in_pos_table_clicked();
+
+    void on_save_in_dep_table_clicked();
 
     void on_tabWidget_tabBarClicked(int index);
 
@@ -47,13 +49,23 @@ private slots:
 
     void on_pos_table_clicked(const QModelIndex &index);
 
+    void on_dep_table_clicked(const QModelIndex &index);
+
+    void on_open_statment_window_clicked();
+
+    void on_save_in_doc_table_clicked();
+
+    void on_doc_table_clicked(const QModelIndex &index);
+
 private:
     void setEmoloyeeDetail(QTableView *tableView);
+    void setDocumentDetail(QTableView *tableView, QComboBox *docComBox);
     void setPositionDetail(QTableView *tableView);
     void setDepartmentDetail(QTableView *tableView);
+    QSqlQueryModel* getStatementDetail();
     void setComBoxValue(QComboBox *posComBox, QComboBox *depComBox);
     int getComBoxIndex(QComboBox *comBox);
-    int positionIdx, departmentIdx;
+    int positionIdx, departmentIdx, salaryIdx;
     QSqlRelationalTableModel *model;
     QDataWidgetMapper *mapper = new QDataWidgetMapper();
     DbController dbController;

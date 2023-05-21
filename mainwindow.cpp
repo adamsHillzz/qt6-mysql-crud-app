@@ -102,7 +102,7 @@ void MainWindow::on_add_new_rec_clicked()
 
 void MainWindow::on_save_in_empl_table_clicked()
 {
-    validation(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit, ui->seniorityEdit, ui->phoneEdit);
+    validation(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit, ui->phoneEdit);
 
     if (!validCheck)
     {
@@ -120,12 +120,12 @@ void MainWindow::on_save_in_empl_table_clicked()
         qDebug() << depIndex;
 
         dbController.insertNewEployee(q, ui->lastnameEdit->text(), ui->firstnameEdit->text(), ui->surnameEdit->text(),
-                                      ui->genderComBox->currentText(), ui->seniorityEdit->text().toInt(),
+                                      ui->genderComBox->currentText(),
                                       ui->hireDataEdit->date(), ui->phoneEdit->text(), posIndex, depIndex);
         setEmoloyeeDetail(ui->empl_table);
 
         resetStateEmpl(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit,
-                       ui->genderComBox, ui->seniorityEdit,
+                       ui->genderComBox,
                        ui->hireDataEdit, ui->phoneEdit, ui->posComBox, ui->depComBox);
     };
 }
@@ -137,8 +137,9 @@ void MainWindow::delete_row_in_table()
     if (ui->tabWidget->currentIndex() == 1)
         selectMode = ui->pos_table->selectionModel();
     if (ui->tabWidget->currentIndex() == 2)
-//        selectMode = ui->emplTable->selectionModel();
-        qDebug() << "dep";
+        selectMode = ui->dep_table->selectionModel();
+    if (ui->tabWidget->currentIndex() == 3)
+        selectMode = ui->doc_table->selectionModel();
 
     QModelIndexList listMode = selectMode->selectedRows();
     qDebug() << "list: " << listMode.size();
@@ -149,15 +150,24 @@ void MainWindow::delete_row_in_table()
     {
         QMessageBox::information(NULL, tr("Внимание"), tr("Вы действидельно хотите удалить запись?"), QMessageBox::Yes, QMessageBox::No);
         if (QMessageBox::Yes) {
-            if (ui->tabWidget->currentIndex() == 0) {
+            if (ui->tabWidget->currentIndex() == 0)
+            {
                 dbController.removeRecord(ui->empl_table, listMode);
                 resetStateEmpl(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit,
-                               ui->genderComBox, ui->seniorityEdit,
+                               ui->genderComBox,
                                ui->hireDataEdit, ui->phoneEdit, ui->posComBox, ui->depComBox);
+            } else if (ui->tabWidget->currentIndex() == 1)
+            {
+                dbController.removeRecord(ui->pos_table, listMode);
+                resetStatePos(ui->posEdit, ui->salaryEdit);
+            } else if (ui->tabWidget->currentIndex() == 2)
+            {
+                dbController.removeRecord(ui->dep_table, listMode);
+                resetStateDep(ui->depEdit, ui->officeEdit, ui->depPhoneEdit);
+            } else {
+                dbController.removeRecord(ui->doc_table, listMode);
+                resetStateDoc(ui->docDateEdit, ui->docNumEdit, ui->ratDokEdit, ui->docComBox);
             }
-            if (ui->tabWidget->currentIndex() == 1)
-                 dbController.removeRecord(ui->pos_table, listMode);
-                 resetStatePos(ui->posEdit, ui->salaryEdit);
         }
     }
 }
@@ -179,7 +189,6 @@ void MainWindow::setEmoloyeeDetail(QTableView *tableView)
     model->setHeaderData(model->fieldIndex("name"), Qt::Horizontal, QTableView::tr("Имя"));
     model->setHeaderData(model->fieldIndex("surname"), Qt::Horizontal, QTableView::tr("Отчество"));
     model->setHeaderData(model->fieldIndex("gender"), Qt::Horizontal, QTableView::tr("Пол"));
-    model->setHeaderData(model->fieldIndex("seniority"), Qt::Horizontal, QTableView::tr("Стаж"));
     model->setHeaderData(model->fieldIndex("hire_data"), Qt::Horizontal, QTableView::tr("Дата приема"));
     model->setHeaderData(model->fieldIndex("phone"), Qt::Horizontal, QTableView::tr("Телефон"));
     model->setHeaderData(positionIdx, Qt::Horizontal, QTableView::tr("Должность"));
@@ -203,13 +212,56 @@ void MainWindow::setEmoloyeeDetail(QTableView *tableView)
         mapper->addMapping(ui->firstnameEdit, model->fieldIndex("name"));
         mapper->addMapping(ui->surnameEdit, model->fieldIndex("surname"));
         mapper->addMapping(ui->genderComBox, model->fieldIndex("gender"));
-        mapper->addMapping(ui->seniorityEdit, model->fieldIndex("seniority"));
         mapper->addMapping(ui->hireDataEdit, model->fieldIndex("hire_data"));
         mapper->addMapping(ui->phoneEdit, model->fieldIndex("phone"));
         mapper->addMapping(ui->posComBox, positionIdx);
         mapper->addMapping(ui->depComBox, departmentIdx);
 
         connect(ui->empl_table->selectionModel(),
+                &QItemSelectionModel::currentRowChanged,
+                mapper,
+                &QDataWidgetMapper::setCurrentModelIndex
+                );
+    };
+}
+
+void MainWindow::setDocumentDetail(QTableView *tableView, QComboBox *docComBox)
+{
+    model = new QSqlRelationalTableModel(tableView);
+
+    model->setTable("statement");
+    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
+    salaryIdx = model->fieldIndex("salary");
+    qDebug() << salaryIdx;
+
+    model->setRelation(salaryIdx, QSqlRelation("positions", "id_pos", "salary"));
+
+    model->setHeaderData(model->fieldIndex("data_doc"), Qt::Horizontal, QTableView::tr("Дата документа"));
+    model->setHeaderData(model->fieldIndex("doc_number"), Qt::Horizontal, QTableView::tr("№ документа"));
+    model->setHeaderData(model->fieldIndex("rate"), Qt::Horizontal, QTableView::tr("Ставка"));
+    model->setHeaderData(salaryIdx, Qt::Horizontal, QTableView::tr("Оклад"));
+
+    if (!model->select())
+        qDebug() << model->lastError();
+
+    tableView->setModel(model);
+    tableView->setColumnHidden(model->fieldIndex("id_doc"), true);
+
+    docComBox->setModel(model->relationModel(salaryIdx));
+    docComBox->setModelColumn(model->relationModel(salaryIdx)->fieldIndex("salary"));
+
+    if (tableView->objectName() == "doc_table")
+    {
+        mapper = new QDataWidgetMapper(this);
+        mapper->setModel(model);
+
+        mapper->addMapping(ui->docDateEdit, model->fieldIndex("data_doc"));
+        mapper->addMapping(ui->docNumEdit, model->fieldIndex("doc_number"));
+        mapper->addMapping(ui->ratDokEdit, model->fieldIndex("rate"));
+        mapper->addMapping(docComBox, salaryIdx);
+
+        connect(ui->doc_table->selectionModel(),
                 &QItemSelectionModel::currentRowChanged,
                 mapper,
                 &QDataWidgetMapper::setCurrentModelIndex
@@ -266,9 +318,51 @@ void MainWindow::setDepartmentDetail(QTableView *tableView)
         qDebug() << model->lastError();
 
     tableView->setModel(model);
+    tableView->setColumnHidden(model->fieldIndex("id_dep"), true);
 
     for (int i = 0; i < model->columnCount(); i++)
         tableView->setColumnWidth(i, 135);
+
+    if (tableView->objectName() == "dep_table")
+    {
+        mapper = new QDataWidgetMapper(this);
+        mapper->setModel(model);
+        mapper->addMapping(ui->depEdit, model->fieldIndex("department_name"));
+        mapper->addMapping(ui->officeEdit, model->fieldIndex("office_num"));
+        mapper->addMapping(ui->depPhoneEdit, model->fieldIndex("department_phone"));
+
+        connect(ui->dep_table->selectionModel(),
+                &QItemSelectionModel::currentRowChanged,
+                mapper,
+                &QDataWidgetMapper::setCurrentModelIndex
+                );
+    };
+}
+
+QSqlQueryModel* MainWindow::getStatementDetail()
+{
+    QSqlQueryModel *model = new QSqlQueryModel();
+
+    q.prepare("SELECT data_doc, doc_number, position_name, rate, positions.salary, Sum(rate * positions.salary - positions.salary * 0.3) as Total FROM statement, "
+              "positions where statement.salary = positions.id_pos Group by id_doc, data_doc, doc_number, rate Order By data_doc DESC, doc_number;");
+
+    if(q.exec())
+    {
+        model->setQuery(q);
+        qDebug() << "Sucesss";
+    }
+    else
+    {
+        qDebug() << "Failed";
+    }
+    model->setHeaderData(0, Qt::Horizontal, tr("Дата документа"));
+    model->setHeaderData(1, Qt::Horizontal, tr("Номер документа"));
+    model->setHeaderData(2, Qt::Horizontal, tr("Должность"));
+    model->setHeaderData(3, Qt::Horizontal, tr("Стаж (лет)"));
+    model->setHeaderData(4, Qt::Horizontal, tr("Оклад"));
+    model->setHeaderData(5, Qt::Horizontal, tr("Итого"));
+
+    return model;
 }
 
 void MainWindow::setComBoxValue(QComboBox *posComBox, QComboBox *depComBox)
@@ -291,7 +385,7 @@ void MainWindow::on_edit_rec_clicked()
 {
     if (ui->tabWidget->currentIndex() == 0)
     {
-        validation(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit, ui->seniorityEdit, ui->phoneEdit);
+        validation(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit, ui->phoneEdit);
 
         if (!validCheck)
         {
@@ -305,14 +399,14 @@ void MainWindow::on_edit_rec_clicked()
             int depIndex = getComBoxIndex(ui->depComBox);
 
             dbController.updateRecordEmpl(q, ui->lastnameEdit->text(), ui->firstnameEdit->text(), ui->surnameEdit->text(),
-                                      ui->genderComBox->currentText(), ui->seniorityEdit->text().toInt(),
+                                      ui->genderComBox->currentText(),
                                       ui->hireDataEdit->date(), ui->phoneEdit->text(), posIndex, depIndex, idRec);
             setEmoloyeeDetail(ui->empl_table);
-
-            resetStateEmpl(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit,
-                           ui->genderComBox, ui->seniorityEdit,
-                           ui->hireDataEdit, ui->phoneEdit, ui->posComBox, ui->depComBox);
         }
+
+        resetStateEmpl(ui->lastnameEdit, ui->firstnameEdit, ui->surnameEdit,
+                       ui->genderComBox,
+                       ui->hireDataEdit, ui->phoneEdit, ui->posComBox, ui->depComBox);
     } else if (ui->tabWidget->currentIndex() == 1)
     {
         validation(ui->posEdit, ui->salaryEdit);
@@ -328,9 +422,46 @@ void MainWindow::on_edit_rec_clicked()
         {
             dbController.updateRecordPos(q, ui->posEdit->text(), ui->salaryEdit->text().toInt(), idRec);
             setPositionDetail(ui->pos_table);
-
-            resetStatePos(ui->posEdit, ui->salaryEdit);
         }
+
+        resetStatePos(ui->posEdit, ui->salaryEdit);
+    } else if (ui->tabWidget->currentIndex() == 2)
+    {
+        validation(ui->depEdit, ui->officeEdit, ui->depPhoneEdit);
+
+        if (!validCheck)
+        {
+            QMessageBox msg;
+            msg.setWindowTitle("Внимание");
+            msg.setIcon(QMessageBox::Warning);
+            msg.setText("Для того чтобы изменить запись сначало выберите её, щелкнув по ячейке таблице");
+            msg.exec();
+        } else
+        {
+            dbController.updateRecordDep(q, ui->depEdit->text(), ui->officeEdit->text().toInt(), ui->depPhoneEdit->text().toInt(), idRec);
+            setDepartmentDetail(ui->pos_table);
+        }
+
+        resetStateDep(ui->depEdit, ui->officeEdit, ui->depPhoneEdit);
+    } else if (ui->tabWidget->currentIndex() == 3)
+    {
+        validation(ui->docNumEdit, ui->ratDokEdit);
+
+        if (!validCheck)
+        {
+            QMessageBox msg;
+            msg.setWindowTitle("Внимание");
+            msg.setIcon(QMessageBox::Warning);
+            msg.setText("Для того чтобы изменить запись сначало выберите её, щелкнув по ячейке таблице");
+            msg.exec();
+        } else
+        {
+            int docIndex = getComBoxIndex(ui->docComBox);
+
+            dbController.updateRecordDoc(q, ui->docDateEdit->date(), ui->docNumEdit->text(), ui->ratDokEdit->text().toInt(), docIndex, idRec);
+            setDocumentDetail(ui->doc_table, ui->docComBox);
+        }
+        resetStateDoc(ui->docDateEdit, ui->docNumEdit, ui->ratDokEdit, ui->docComBox);
     }
 }
 
@@ -350,10 +481,29 @@ void MainWindow::on_save_in_pos_table_clicked()
         dbController.insertNewPosition(q, ui->posEdit->text(), ui->salaryEdit->text().toInt());
         setPositionDetail(ui->pos_table);
 
-        resetStatePos(ui->posEdit, ui->salaryEdit);
+        resetStateDep(ui->depEdit, ui->officeEdit, ui->depPhoneEdit);
     };
 }
 
+void MainWindow::on_save_in_dep_table_clicked()
+{
+    validation(ui->depEdit, ui->officeEdit, ui->depPhoneEdit);
+
+    if (!validCheck)
+    {
+        QMessageBox msg;
+        msg.setWindowTitle("Внимание");
+        msg.setIcon(QMessageBox::Warning);
+        msg.setText("Пожалуйста заполните все поля");
+        msg.exec();
+    } else
+    {
+        dbController.insertNewDepartment(q, ui->depEdit->text(), ui->officeEdit->text().toInt(), ui->officeEdit->text().toInt());
+        setDepartmentDetail(ui->dep_table);
+
+        resetStateDep(ui->depEdit, ui->officeEdit, ui->depPhoneEdit);
+    };
+}
 
 void MainWindow::on_tabWidget_tabBarClicked(int index)
 {
@@ -362,6 +512,16 @@ void MainWindow::on_tabWidget_tabBarClicked(int index)
     if (index == 1)
     {
         setPositionDetail(ui->pos_table);
+    }
+
+    if (index == 2)
+    {
+        setDepartmentDetail(ui->dep_table);
+    }
+
+    if (index == 3)
+    {
+        setDocumentDetail(ui->doc_table, ui->docComBox);
     }
 }
 
@@ -375,5 +535,51 @@ void MainWindow::on_empl_table_clicked(const QModelIndex &index)
 void MainWindow::on_pos_table_clicked(const QModelIndex &index)
 {
    idRec = ui->pos_table->model()->index(index.row(), 0).data().toString();
+}
+
+
+void MainWindow::on_dep_table_clicked(const QModelIndex &index)
+{
+   idRec = ui->dep_table->model()->index(index.row(), 0).data().toString();
+}
+
+void MainWindow::on_open_statment_window_clicked()
+{
+   ui->seachStackedWidget->setCurrentIndex(2);
+   activeButton(ui->seachStackedWidget, ui->delete_rec, ui->edit_rec);
+   ui->states_table->setModel(getStatementDetail());
+
+   for (int i = 0; i < model->columnCount(); i++)
+        ui->states_table->setColumnWidth(i, 135);
+}
+
+
+void MainWindow::on_save_in_doc_table_clicked()
+{
+   validation(ui->docNumEdit, ui->ratDokEdit);
+
+   if (!validCheck)
+   {
+        QMessageBox msg;
+        msg.setWindowTitle("Внимание");
+        msg.setIcon(QMessageBox::Warning);
+        msg.setText("Пожалуйста заполните все поля");
+        msg.exec();
+   } else
+   {
+        int docIndex = getComBoxIndex(ui->docComBox);
+
+        qDebug() << docIndex;
+        dbController.insertNewDocument(q, ui->docDateEdit->date(), ui->docNumEdit->text(), ui->ratDokEdit->text().toInt(), docIndex);
+        setDocumentDetail(ui->doc_table, ui->docComBox);
+
+        resetStateDoc(ui->docDateEdit, ui->docNumEdit, ui->ratDokEdit, ui->docComBox);
+   };
+}
+
+
+void MainWindow::on_doc_table_clicked(const QModelIndex &index)
+{
+   idRec = ui->doc_table->model()->index(index.row(), 0).data().toString();
 }
 
