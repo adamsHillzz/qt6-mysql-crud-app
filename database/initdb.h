@@ -6,6 +6,7 @@
 QSqlError initDb()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+
     db.setHostName("localhost");
     db.setDatabaseName("kurs_db");
     db.setUserName("root");

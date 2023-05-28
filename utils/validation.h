@@ -6,7 +6,10 @@
 bool validCheck;
 
 template<typename Arg>
-void validation(Arg lineEdit) {return;}
+void validation(Arg lineEdit)
+{
+    lineEdit->text() != "" ? validCheck = true : validCheck = false;
+}
 
 template<typename Arg, typename... Args>
 void validation(Arg arg, Args... args)

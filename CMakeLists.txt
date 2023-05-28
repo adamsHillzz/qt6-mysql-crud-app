@@ -17,11 +17,15 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        coeffwindow.h
+        coeffwindow.cpp
+        coeffwindow.ui
         utils/validation.h
         database/initdb.h
         database/dbcontroller.h
         database/dbquerys.h
         database/dbcontroller.cpp
+        icons/icons.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
