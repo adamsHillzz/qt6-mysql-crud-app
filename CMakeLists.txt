@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
         coeffwindow.cpp
         coeffwindow.ui
         utils/validation.h
+        utils/resetstate.h
+        utils/activebutton.h
         database/initdb.h
         database/dbcontroller.h
         database/dbquerys.h

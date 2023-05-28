@@ -19,6 +19,10 @@ const auto INSERT_DOCUMENT_SQL = QLatin1String(R"(
     insert into statement(data_doc, doc_number, employee) values(?, ?, ?);
 )");
 
+const auto INSERT_COEFF_SQL = QLatin1String(R"(
+    insert into rates(stage, coeff) values(?, ?);
+)");
+
 const auto UPDATE_EMPLOYEE_SQL = QLatin1String(R"(
     update employees set lastname = ?, name = ?, surname = ?, gender = ?, hire_data = ?, phone = ?, position = ?, department = ? where id_empl = ?;
 )");
@@ -33,6 +37,10 @@ const auto UPDATE_DEPARTMENT_SQL = QLatin1String(R"(
 
 const auto UPDATE_SALARY_SQL = QLatin1String(R"(
     update statement set data_doc = ?, doc_number = ?, employee = ? where id_doc = ?;
+)");
+
+const auto UPDATE_COEFF_SQL = QLatin1String(R"(
+    update rates set stage = ?, coeff = ? where id_rate = ?;
 )");
 
 #endif // DBQUERY_H

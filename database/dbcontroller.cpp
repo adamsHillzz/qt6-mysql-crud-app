@@ -126,7 +126,6 @@ void DbController::removeRecord(QTableView *tableView, QModelIndexList listMode)
 
     for (int i = 0; i < listMode.count(); i++)
     {
-        //int mainId = model->data(model->index(listMode.at(i).row(), 0)).toInt();
        model->removeRow(listMode.at(i).row());
     }
 

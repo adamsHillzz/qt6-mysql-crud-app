@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>team.png</file>
+        <file>coeff.png</file>
+        <file>employees.png</file>
     </qresource>
 </RCC>
